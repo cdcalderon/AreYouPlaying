@@ -18,12 +18,21 @@ namespace WhosPlayingSports
     {
         [FunctionName("CreateEvent")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", 
-            Route = null)]HttpRequestMessage req, ILogger log)
+            Route = null)]HttpRequestMessage req, ILogger log, IAsyncCollector<EmailDetails> emailsQueue)
         {
             var eventDetails = await req.Content.ReadAsAsync<EventDetails>();
             foreach(var invitee in eventDetails.Invitees)
             {
                 log.LogInformation($"Inviting {invitee.Name} ({invitee.Email})");
+                var accessCode = Guid.NewGuid().ToString("n");
+                var amailDetails = new EmailDetails
+                {
+                    EventDateAndTime = eventDetails.EventDateAndTime,
+                    Location = eventDetails.Location,
+                    Name = invitee.Name,
+                    Email = invitee.Email,
+                    ResponseUrl = $"https://whosplayingsportfuncs.azurewebsites.net"
+                };
             }
 
             return req.CreateResponse(System.Net.HttpStatusCode.OK);
@@ -41,6 +50,15 @@ namespace WhosPlayingSports
     {
         public string Name { get; set; }
         public string Email { get; set; }
+    }
+
+    public class EmailDetails
+    {
+        public DateTime EventDateAndTime { get; set; }
+        public string Location { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string ResponseUrl { get; set; }
     }
 }
 
