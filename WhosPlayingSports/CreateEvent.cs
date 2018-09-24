@@ -11,21 +11,23 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
-
 namespace WhosPlayingSports
 {
     public static class CreateEvent
     {
         [FunctionName("CreateEvent")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", 
-            Route = null)]HttpRequestMessage req, ILogger log, IAsyncCollector<EmailDetails> emailsQueue)
+        public static async Task<HttpResponseMessage> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post",Route = null)]HttpRequestMessage req,
+            [Queue("emails", Connection = "AzureWebJobsStorage")]IAsyncCollector<EmailDetails> emailsQueue,
+            ILogger log
+            )
         {
             var eventDetails = await req.Content.ReadAsAsync<EventDetails>();
             foreach(var invitee in eventDetails.Invitees)
             {
                 log.LogInformation($"Inviting {invitee.Name} ({invitee.Email})");
                 var accessCode = Guid.NewGuid().ToString("n");
-                var amailDetails = new EmailDetails
+                var emailDetails = new EmailDetails
                 {
                     EventDateAndTime = eventDetails.EventDateAndTime,
                     Location = eventDetails.Location,
@@ -33,8 +35,10 @@ namespace WhosPlayingSports
                     Email = invitee.Email,
                     ResponseUrl = $"https://whosplayingsportfuncs.azurewebsites.net"
                 };
-            }
 
+                await emailsQueue.AddAsync(emailDetails);
+            }
+           
             return req.CreateResponse(System.Net.HttpStatusCode.OK);
         }
     }
