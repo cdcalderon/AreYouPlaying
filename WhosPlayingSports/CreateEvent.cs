@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
+using WhosPlayingSports.Models;
+
 namespace WhosPlayingSports
 {
     public static class CreateEvent
@@ -56,13 +58,6 @@ namespace WhosPlayingSports
         public string Email { get; set; }
     }
 
-    public class EmailDetails
-    {
-        public DateTime EventDateAndTime { get; set; }
-        public string Location { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string ResponseUrl { get; set; }
-    }
+    
 }
 
