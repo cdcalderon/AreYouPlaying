@@ -14,10 +14,10 @@ namespace WhosPlayingSports
             [SendGrid(ApiKey = "SendGridApiKey")] out SendGridMessage message,
             ILogger log)
         {
-            log.LogInformation($"C# Queue trigger function processed: test");
+            log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
             message = new SendGridMessage();
             message.AddTo("cdcalderon@gmail.com");
-            message.AddContent("text/html", "exito");
+            message.AddContent("text/html", myQueueItem.Name + myQueueItem.Email + "exito");
             message.SetFrom(new EmailAddress("cdcalderon@gmail.com"));
             message.SetSubject("TEST");
         }
