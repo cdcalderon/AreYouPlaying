@@ -10,7 +10,7 @@ namespace WhosPlayingSports
     public static class SendInvitationEmail
     {
         [FunctionName("SendInvitationEmail")]
-        public static void Run([QueueTrigger("myqueue-items", Connection = "AzureWebJobsStorage")]EmailDetails myQueueItem,
+        public static void Run([QueueTrigger("emails", Connection = "AzureWebJobsStorage")]EmailDetails myQueueItem,
             [SendGrid(ApiKey = "SendGridApiKey")] out SendGridMessage message,
             OutgoingEmail email,
             ILogger log)
@@ -32,3 +32,18 @@ namespace WhosPlayingSports
         }
     }
 }
+
+
+public class EmailDetails
+{
+    public DateTime EventDateAndTime { get; set; }
+
+    public string Location { get; set; }
+
+    public string Name { get; set; }
+
+    public string Email { get; set; }
+
+    public string ResponseUrl { get; set; }
+}
+
