@@ -27,7 +27,7 @@ namespace WhosPlayingSports
             var resultState = TicTacTec.TA.Library.Core.MovingAverage(
                 0,
                 closePrices.Length - 1,
-                closePrices, 10,
+                closePrices, 13,
                 Core.MAType.Ema,
                 out outBegIndex,
                 out outNbElement,
